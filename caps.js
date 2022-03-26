@@ -1,8 +1,8 @@
 "use strict";
 
-const {fakeOrder} = require('./clients/driver');
+const {fakeOrderHandler} = require('./clients/driver');
 
 
 setInterval(() => {
-  fakeOrder();
+  fakeOrderHandler();
 }, 5000);
