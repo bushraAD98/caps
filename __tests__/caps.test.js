@@ -1,49 +1,39 @@
+
 'use strict';
 
-require('../caps');
-require('../driver');
-require('../vendor');
-
-const event = require('../events.js');
-const faker = require('faker');
+const events = require('../lib/events')
+const { faker } = require('@faker-js/faker');
 
 
-describe('caps tests', () => {
-  let consoleSpy;
-  let payload = {
-    store: "flowers store",
+
+let storeName = {
+    store: "Tulips",
     orderID: faker.datatype.uuid(),
     customer: faker.name.findName(),
-    address: faker.address.streetAddress(),
-  };
+    address: `${faker.address.city()}, ${faker.address.stateAbbr()}`,
+};
 
-  beforeEach(() => {
-    consoleSpy = jest.spyOn(console, 'log').mockImplementation();
-  });
-  afterEach(() => {
-    consoleSpy.mockRestore();
-  });
 
-  test('tet pick up  ', async () => {
-    event.emit('pick', payload);
-    await expect(consoleSpy).toHaveBeenCalled();
-  });
+describe('test the events', () => {
+    let consoleSpy;
+    beforeAll(() => {
+        consoleSpy = jest.spyOn(console, 'log').mockImplementation();
+    })
 
-  test('tet deliver  ', async () => {
-    event.emit('deliver', payload);
+    it('test the pickup event ', async () => {
+        events.emit('pickUp', storeName);
+        await consoleSpy();
+        expect(consoleSpy).toHaveBeenCalled();
+    })
+    it('test in transit event', async () => {
+        events.emit('inTransit', storeName);
+        await consoleSpy();
+        expect(consoleSpy).toHaveBeenCalled();
+    })
+    it('test the deliver event', async () => {
+        events.emit('delivered', storeName);
+        await consoleSpy();
+        expect(consoleSpy).toHaveBeenCalled();
+    })
 
-    await expect(consoleSpy).toHaveBeenCalled();
-  });
-
-  test('tet transit  ', async () => {
-    event.emit('transit', payload);
-
-    await expect(consoleSpy).toHaveBeenCalled();
-  });
-
-  test('tet delivered  ', async () => {
-    event.emit('delivered', payload);
-
-    await expect(consoleSpy).toHaveBeenCalled();
-  });
-});
+})
